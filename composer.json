@@ -18,5 +18,12 @@
     },
     "autoload": {
         "psr-4": { "Yetione\\RabbitMQAdapter\\": "src/"}
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Yetione\\RabbitMQAdapter\\Providers\\LaravelRabbitMQServiceProvider"
+            ]
+        }
     }
 }
