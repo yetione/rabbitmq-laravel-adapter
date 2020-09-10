@@ -38,7 +38,7 @@ class AbstractServiceProvider extends ServiceProvider
     protected function registerSerializer()
     {
         $this->app->singleton(Serializer::class);
-        $this->app->alias('serializer', Serializer::class);
+        $this->app->alias(Serializer::class, 'dto.serializer');
     }
 
     protected function publishConfig()
