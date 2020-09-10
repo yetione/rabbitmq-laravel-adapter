@@ -5,7 +5,6 @@ namespace Yetione\RabbitMQAdapter\Providers;
 
 
 use Illuminate\Support\ServiceProvider;
-use Yetione\DTO\Serializer;
 use Yetione\RabbitMQ\Event\EventDispatcherInterface;
 use Yetione\RabbitMQ\Service\ConfigProviderInterface;
 use Yetione\RabbitMQ\Service\ConfigService;
@@ -17,7 +16,6 @@ class AbstractServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->registerSerializer();
         $this->mergeConfigFrom(
             __DIR__.'/../../config/rabbitmq.php',
             'rabbitmq'
@@ -33,12 +31,6 @@ class AbstractServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishConfig();
-    }
-
-    protected function registerSerializer()
-    {
-        $this->app->singleton(Serializer::class);
-        $this->app->alias(Serializer::class, 'dto.serializer');
     }
 
     protected function publishConfig()
