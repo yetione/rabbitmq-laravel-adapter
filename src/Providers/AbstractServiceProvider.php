@@ -17,11 +17,11 @@ class AbstractServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../../config/rabbitmq.php',
-            'rabbitmq'
+            __DIR__.'/../../config/rabbitmq-connection.php',
+            'rabbitmq-connection'
         );
         $this->app->singleton(ConfigProviderInterface::class, static function ($app) {
-            return new ConfigProvider(config('rabbitmq'));
+            return new ConfigProvider(config('rabbitmq-connection'));
         });
         $this->app->singleton(ConfigService::class);
         $this->app->singleton(RabbitMQService::class);
@@ -36,6 +36,7 @@ class AbstractServiceProvider extends ServiceProvider
     protected function publishConfig()
     {
         $this->publishes([
+            __DIR__.'/../../config/rabbitmq-connection.php' => config_path('rabbitmq-connection.php'),
             __DIR__.'/../../config/rabbitmq.php' => config_path('rabbitmq.php')
         ], 'rabbitmq-config');
     }
