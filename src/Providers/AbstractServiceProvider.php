@@ -20,7 +20,9 @@ class AbstractServiceProvider extends ServiceProvider
             __DIR__.'/../../config/rabbitmq-connection.php',
             'rabbitmq-connection'
         );
+
         $this->app->singleton(ConnectionsConfig::class, static function ($app): ConnectionsConfig {
+            $e = '';
             return new ConnectionsConfig($app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq-connection')]));
         });
         $this->app->singleton(RabbitMQService::class);

@@ -14,7 +14,7 @@
         "php": "^7.4",
         "illuminate/support": "^7",
         "illuminate/events": "^7",
-        "yetione/rabbitmq-module": "^1",
+        "yetione/rabbitmq-module": "@dev",
         "yetione/dtoable-laravel-adapter": "^1"
     },
     "autoload": {
@@ -26,5 +26,14 @@
                 "Yetione\\RabbitMQAdapter\\Providers\\LaravelRabbitMQServiceProvider"
             ]
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../rabbitmq-module",
+            "options": {
+                "symlink": false
+            }
+        }
+    ]
 }
