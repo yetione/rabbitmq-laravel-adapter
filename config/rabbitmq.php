@@ -12,7 +12,7 @@ return [
     ],
     'exchanges'=>[
         'events_root'=>[
-//            'name'=>'shopify.events',
+            'name'=>'shopify.events',
             'type'=> ExchangeTypes::TYPE_TOPIC,
             'passive'=>true,
             'durable'=>true,
@@ -23,7 +23,7 @@ return [
             ]
         ],
         'events_root.alternate'=>[
-//            'name'=>'shopify._events_alternate',
+            'name'=>'shopify._events_alternate',
             'type'=>ExchangeTypes::TYPE_FANOUT,
             'passive'=>true,
             'durable'=>true,
