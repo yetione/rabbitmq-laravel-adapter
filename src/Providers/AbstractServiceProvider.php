@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Yetione\RabbitMQ\Configs\ConnectableConfig;
 use Yetione\RabbitMQ\Configs\ConnectionsConfig;
 use Yetione\RabbitMQ\Configs\DefaultConfig;
+use Yetione\RabbitMQ\Configs\ExchangesConfig;
 use Yetione\RabbitMQ\Configs\ProducersConfig;
 use Yetione\RabbitMQ\Configs\Providers\ArrayConfigProvider;
 use Yetione\RabbitMQ\Connection\ConnectionFactory;
@@ -48,6 +49,11 @@ class AbstractServiceProvider extends ServiceProvider
             return new ProducersConfig($app->make(DefaultConfig::class),
                 $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq.producers')]));
         });
+        $this->app->singleton(ExchangesConfig::class, static function ($app): ExchangesConfig {
+            return new ExchangesConfig($app->make(DefaultConfig::class),
+                $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq.exchanges')]));
+        });
+
         $this->app->singleton(ConnectionFactory::class, static function ($app): ConnectionFactory {
             return new ConnectionFactory($app->make(ConnectionsConfig::class));
         });
