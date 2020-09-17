@@ -8,9 +8,12 @@ return [
             'type'=>'single',
             'exchange'=>'events_root',
             'connection'=>'producer',
+            'connection_alias'=>'events_producer',
             'auto_reconnect'=>true,
             'reconnect_retries'=>10,
-            'reconnect_delay'=>800000
+            'reconnect_delay'=>800000,
+            'reconnect_interval'=>500000,
+            'publish_retries'=>3,
         ]
     ],
     'exchanges'=>[
@@ -36,13 +39,6 @@ return [
             'durable'=>true,
             'auto_delete'=>false,
             'internal'=>false,
-        ]
-    ],
-    'defaults'=>[
-        'connectable'=>[
-            'auto_reconnect'=>true,
-            'reconnect_retries'=>5,
-            'reconnect_delay'=>500000
         ]
     ],
     'producers_types'=>[
