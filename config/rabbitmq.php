@@ -8,7 +8,6 @@ return [
             'type'=>'single',
             'exchange'=>'events_root',
             'connection'=>'producer',
-            'publish_retries'=>5,
             'auto_reconnect'=>true,
             'reconnect_retries'=>10,
             'reconnect_delay'=>800000
@@ -22,9 +21,13 @@ return [
             'durable'=>true,
             'auto_delete'=>false,
             'internal'=>false,
+            'nowait'=>false,
             'arguments'=>[
                 'alternate-exchange'=>'shopify._events'
-            ]
+            ],
+            'ticket'=>null,
+            'declare'=>false,
+            'temporary'=>false
         ],
         'events_root.alternate'=>[
             'name'=>'shopify._events_alternate',
