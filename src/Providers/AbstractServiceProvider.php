@@ -5,8 +5,12 @@ namespace Yetione\RabbitMQAdapter\Providers;
 
 
 use Illuminate\Support\ServiceProvider;
+use Yetione\RabbitMQ\Configs\ConnectableConfig;
 use Yetione\RabbitMQ\Configs\ConnectionsConfig;
+use Yetione\RabbitMQ\Configs\DefaultConfig;
+use Yetione\RabbitMQ\Configs\ProducersConfig;
 use Yetione\RabbitMQ\Configs\Providers\ArrayConfigProvider;
+use Yetione\RabbitMQ\Connection\ConnectionFactory;
 use Yetione\RabbitMQ\Event\EventDispatcherInterface;
 use Yetione\RabbitMQ\Service\RabbitMQService;
 use Yetione\RabbitMQAdapter\Events\EventDispatcher;
@@ -17,13 +21,37 @@ class AbstractServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
+            __DIR__.'/../../config/rabbitmq-default.php',
+            'rabbitmq-default'
+        );
+        $this->app->singleton(DefaultConfig::class, static function ($app): DefaultConfig {
+            return new DefaultConfig(
+                $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq-default')])
+            );
+        });
+
+        $this->mergeConfigFrom(
             __DIR__.'/../../config/rabbitmq-connection.php',
             'rabbitmq-connection'
         );
-
         $this->app->singleton(ConnectionsConfig::class, static function ($app): ConnectionsConfig {
-            return new ConnectionsConfig($app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq-connection')]));
+            return new ConnectionsConfig(
+                $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq-connection')])
+            );
         });
+
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/rabbitmq.php',
+            'rabbitmq'
+        );
+        $this->app->singleton(ProducersConfig::class, static function ($app): ProducersConfig {
+            return new ProducersConfig($app->make(DefaultConfig::class),
+                $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq.producers')]));
+        });
+        $this->app->singleton(ConnectionFactory::class, static function ($app): ConnectionFactory {
+            return new ConnectionFactory($app->make(ConnectionsConfig::class));
+        });
+
         $this->app->singleton(RabbitMQService::class);
         $this->app->singleton(EventDispatcherInterface::class, EventDispatcher::class);
     }
