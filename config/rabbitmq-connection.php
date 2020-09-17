@@ -3,6 +3,7 @@
 use PhpAmqpLib\Connection\AMQPLazyConnection;
 use PhpAmqpLib\Connection\AMQPLazySocketConnection;
 use PhpAmqpLib\Connection\AMQPSocketConnection;
+use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Yetione\RabbitMQ\Constant\Connection as ConnectionEnum;
 
@@ -56,6 +57,7 @@ return [
         ConnectionEnum::TYPE_STREAM_NORMAL => AMQPStreamConnection::class,
         ConnectionEnum::TYPE_STREAM_LAZY => AMQPLazyConnection::class,
         ConnectionEnum::TYPE_SOCKET_NORMAL => AMQPSocketConnection::class,
-        ConnectionEnum::TYPE_SOCKET_LAZY => AMQPLazySocketConnection::class
+        ConnectionEnum::TYPE_SOCKET_LAZY => AMQPLazySocketConnection::class,
+        ConnectionEnum::TYPE_STREAM_SSL => AMQPSSLConnection::class
     ]
 ];
