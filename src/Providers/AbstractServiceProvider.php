@@ -5,7 +5,6 @@ namespace Yetione\RabbitMQAdapter\Providers;
 
 
 use Illuminate\Support\ServiceProvider;
-use Yetione\RabbitMQ\Configs\ConnectableConfig;
 use Yetione\RabbitMQ\Configs\ConnectionsConfig;
 use Yetione\RabbitMQ\Configs\DefaultConfig;
 use Yetione\RabbitMQ\Configs\ExchangesConfig;
@@ -13,6 +12,7 @@ use Yetione\RabbitMQ\Configs\ProducersConfig;
 use Yetione\RabbitMQ\Configs\Providers\ArrayConfigProvider;
 use Yetione\RabbitMQ\Connection\ConnectionFactory;
 use Yetione\RabbitMQ\Event\EventDispatcherInterface;
+use Yetione\RabbitMQ\Producer\ProducerFactory;
 use Yetione\RabbitMQ\Service\RabbitMQService;
 use Yetione\RabbitMQAdapter\Events\EventDispatcher;
 
@@ -60,6 +60,14 @@ class AbstractServiceProvider extends ServiceProvider
 
         $this->app->singleton(RabbitMQService::class);
         $this->app->singleton(EventDispatcherInterface::class, EventDispatcher::class);
+
+        $this->app->singleton(ProducerFactory::class, function ($app): ProducerFactory {
+            return tap($app->make(ProducerFactory::class), function (ProducerFactory $factory) {
+                foreach (config('rabbitmq.producer_types', []) as $type => $producerClass) {
+                    $factory->addProducerType($type, $producerClass);
+                }
+            });
+        });
     }
 
     public function boot()
