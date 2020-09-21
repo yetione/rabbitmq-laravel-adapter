@@ -1,4 +1,6 @@
 <?php use Yetione\RabbitMQ\Constant\Exchange as ExchangeTypes;
+use Yetione\RabbitMQAdapter\Consumers\BasicConsumeConsumer;
+use Yetione\RabbitMQAdapter\Consumers\BasicGetConsumer;
 use Yetione\RabbitMQAdapter\Producers\BatchProducer;
 use Yetione\RabbitMQAdapter\Producers\SingleProducer;
 
@@ -15,6 +17,32 @@ return [
             'reconnect_interval'=>500000,
             'publish_retries'=>3,
         ]
+    ],
+    'consumers'=> [
+        'events.auth.users'=>[
+            'type'=>'consume',
+            'connection'=>'consumer',
+            'connection_alias'=>'events.auth.user',
+            'auto_reconnect'=>true,
+            'reconnect_retries'=>10,
+            'reconnect_delay'=>800000,
+            'reconnect_interval'=>500000,
+            'bindings'=>[
+                'event_root'=>[
+                    'type'=>'queue',
+                    'target'=>''
+                ]
+            ]
+        ]
+    ],
+    'queues'=>[
+        [
+            'name'=>'shopify.app.',
+            'passive'=>false,
+            'durable'=>false,
+            'exclusive'=>true,
+            'auto_delete'=>true
+        ],
     ],
     'exchanges'=>[
         'events_root'=>[
@@ -41,8 +69,12 @@ return [
             'internal'=>false,
         ]
     ],
-    'producers_types'=>[
+    'producer_types'=>[
         'single'=> SingleProducer::class,
         'batch'=> BatchProducer::class
+    ],
+    'consumer_types'=>[
+        'consume'=> BasicConsumeConsumer::class,
+        'get'=> BasicGetConsumer::class
     ]
 ];
