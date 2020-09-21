@@ -11,13 +11,4 @@ use Yetione\RabbitMQAdapter\Producers\Contracts\ProducerContract;
 
 class SingleProducer extends RabbitMQSingleProducer implements ProducerContract
 {
-    public function __construct(array $config, ConnectionInterface $connection, EventDispatcherInterface $eventDispatcher)
-    {
-        parent::__construct($connection, $eventDispatcher);
-    }
-
-    protected function createExchange(): Exchange
-    {
-        // TODO: Implement createExchange() method.
-    }
 }
