@@ -62,7 +62,8 @@ class AbstractServiceProvider extends ServiceProvider
         $this->app->singleton(EventDispatcherInterface::class, EventDispatcher::class);
 
         $this->app->singleton(ProducerFactory::class, function ($app): ProducerFactory {
-            return tap($app->make(ProducerFactory::class), function (ProducerFactory $factory) {
+            $producerFactory = new ProducerFactory($app->make(ProducersConfig::class), $app->make(ExchangesConfig::class), $app->make(ConnectionFactory::class), $app->make(EventDispatcher::class));
+            return tap($producerFactory, function (ProducerFactory $factory) {
                 foreach (config('rabbitmq.producer_types', []) as $type => $producerClass) {
                     $factory->addProducerType($type, $producerClass);
                 }
