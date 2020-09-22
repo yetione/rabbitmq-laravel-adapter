@@ -10,9 +10,11 @@ use Yetione\RabbitMQ\Configs\DefaultConfig;
 use Yetione\RabbitMQ\Configs\ExchangesConfig;
 use Yetione\RabbitMQ\Configs\ProducersConfig;
 use Yetione\RabbitMQ\Configs\Providers\ArrayConfigProvider;
+use Yetione\RabbitMQ\Configs\QueuesConfig;
 use Yetione\RabbitMQ\Connection\ConnectionFactory;
 use Yetione\RabbitMQ\Event\EventDispatcherInterface;
 use Yetione\RabbitMQ\Producer\ProducerFactory;
+use Yetione\RabbitMQ\Queue\QueueFactory;
 use Yetione\RabbitMQ\Service\RabbitMQService;
 use Yetione\RabbitMQAdapter\Events\EventDispatcher;
 
@@ -53,7 +55,13 @@ class AbstractServiceProvider extends ServiceProvider
             return new ExchangesConfig($app->make(DefaultConfig::class),
                 $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq.exchanges')]));
         });
-
+        $this->app->singleton(QueuesConfig::class, static function($app): QueuesConfig {
+            return new QueuesConfig($app->make(DefaultConfig::class),
+                $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq.queues')]));
+        });
+        $this->app->singleton(QueueFactory::class, static function($app): QueueFactory {
+            return new QueueFactory($app->make(QueuesConfig::class));
+        });
         $this->app->singleton(ConnectionFactory::class, static function ($app): ConnectionFactory {
             return new ConnectionFactory($app->make(ConnectionsConfig::class));
         });

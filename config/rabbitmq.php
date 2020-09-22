@@ -36,8 +36,8 @@ return [
         ]
     ],
     'queues'=>[
-        [
-            'name'=>'shopify.app.',
+        'users_event'=>[
+            'name'=>'shopify.app.users.events',
             'passive'=>false,
             'durable'=>false,
             'exclusive'=>true,
