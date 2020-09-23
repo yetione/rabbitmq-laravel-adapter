@@ -40,9 +40,9 @@ return [
             'auto_delete'=>false,
             'internal'=>false,
             'nowait'=>false,
-            'arguments'=>[
-                'alternate-exchange'=>'shopify._events'
-            ],
+//            'arguments'=>[
+//                'alternate-exchange'=>'shopify._events'
+//            ],
             'ticket'=>null,
             'declare'=>false,
             'temporary'=>false
