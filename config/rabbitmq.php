@@ -1,4 +1,6 @@
 <?php use Yetione\RabbitMQ\Constant\Exchange as ExchangeTypes;
+use Yetione\RabbitMQ\DTO\ExchangeBinding;
+use Yetione\RabbitMQ\DTO\QueueBinding;
 use Yetione\RabbitMQAdapter\Consumers\BasicConsumeConsumer;
 use Yetione\RabbitMQAdapter\Consumers\BasicGetConsumer;
 use Yetione\RabbitMQAdapter\Producers\BatchProducer;
@@ -19,7 +21,7 @@ return [
         ]
     ],
     'consumers'=> [
-        'events.auth.users'=>[
+        'events'=>[
             'type'=>'consume',
             'connection'=>'consumer',
             'connection_alias'=>'events.auth.user',
@@ -27,22 +29,7 @@ return [
             'reconnect_retries'=>10,
             'reconnect_delay'=>800000,
             'reconnect_interval'=>500000,
-            'bindings'=>[
-                'event_root'=>[
-                    'type'=>'queue',
-                    'target'=>''
-                ]
-            ]
         ]
-    ],
-    'queues'=>[
-        'users_event'=>[
-            'name'=>'shopify.app.users.events',
-            'passive'=>false,
-            'durable'=>false,
-            'exclusive'=>true,
-            'auto_delete'=>true
-        ],
     ],
     'exchanges'=>[
         'events_root'=>[
@@ -69,6 +56,13 @@ return [
             'internal'=>false,
         ]
     ],
+
+    'queues'=>[
+
+    ],
+    'bindings'=>[
+
+    ],
     'producer_types'=>[
         'single'=> SingleProducer::class,
         'batch'=> BatchProducer::class
@@ -76,5 +70,9 @@ return [
     'consumer_types'=>[
         'consume'=> BasicConsumeConsumer::class,
         'get'=> BasicGetConsumer::class
+    ],
+    'binding_types'=>[
+        'exchange'=> ExchangeBinding::class,
+        'queue'=> QueueBinding::class
     ]
 ];
