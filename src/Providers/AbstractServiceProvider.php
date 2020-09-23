@@ -6,12 +6,14 @@ namespace Yetione\RabbitMQAdapter\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Yetione\RabbitMQ\Configs\ConnectionsConfig;
+use Yetione\RabbitMQ\Configs\ConsumersConfig;
 use Yetione\RabbitMQ\Configs\DefaultConfig;
 use Yetione\RabbitMQ\Configs\ExchangesConfig;
 use Yetione\RabbitMQ\Configs\ProducersConfig;
 use Yetione\RabbitMQ\Configs\Providers\ArrayConfigProvider;
 use Yetione\RabbitMQ\Configs\QueuesConfig;
 use Yetione\RabbitMQ\Connection\ConnectionFactory;
+use Yetione\RabbitMQ\Consumer\ConsumerFactory;
 use Yetione\RabbitMQ\Event\EventDispatcherInterface;
 use Yetione\RabbitMQ\Producer\ProducerFactory;
 use Yetione\RabbitMQ\Queue\QueueFactory;
@@ -59,6 +61,10 @@ class AbstractServiceProvider extends ServiceProvider
             return new QueuesConfig($app->make(DefaultConfig::class),
                 $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq.queues')]));
         });
+        $this->app->singleton(ConsumersConfig::class, static function($app): ConsumersConfig {
+            return new ConsumersConfig($app->make(DefaultConfig::class),
+                $app->make(ArrayConfigProvider::class, ['config'=>config('rabbitmq.consumers')]));
+        });
         $this->app->singleton(QueueFactory::class, static function($app): QueueFactory {
             return new QueueFactory($app->make(QueuesConfig::class));
         });
@@ -66,14 +72,33 @@ class AbstractServiceProvider extends ServiceProvider
             return new ConnectionFactory($app->make(ConnectionsConfig::class));
         });
 
+
         $this->app->singleton(RabbitMQService::class);
         $this->app->singleton(EventDispatcherInterface::class, EventDispatcher::class);
 
-        $this->app->singleton(ProducerFactory::class, function ($app): ProducerFactory {
-            $producerFactory = new ProducerFactory($app->make(ProducersConfig::class), $app->make(ExchangesConfig::class), $app->make(ConnectionFactory::class), $app->make(EventDispatcher::class));
+        $this->app->singleton(ProducerFactory::class, static function ($app): ProducerFactory {
+            $producerFactory = new ProducerFactory(
+                $app->make(ProducersConfig::class),
+                $app->make(ExchangesConfig::class),
+                $app->make(ConnectionFactory::class),
+                $app->make(EventDispatcher::class)
+            );
             return tap($producerFactory, function (ProducerFactory $factory) {
                 foreach (config('rabbitmq.producer_types', []) as $type => $producerClass) {
                     $factory->addProducerType($type, $producerClass);
+                }
+            });
+        });
+
+        $this->app->singleton(ConsumerFactory::class, static function ($app): ConsumerFactory {
+            $consumersFactory = new ConsumerFactory(
+                $app->make(ConsumersConfig::class),
+                $app->make(ConnectionFactory::class),
+                $app->make(EventDispatcher::class)
+            );
+            return tap($consumersFactory, function (ConsumerFactory $factory) {
+                foreach (config('rabbitmq.consumer_types', []) as $type => $producerClass) {
+                    $factory->addConsumerType($type, $producerClass);
                 }
             });
         });
