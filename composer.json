@@ -15,7 +15,8 @@
         "illuminate/support": "^7",
         "illuminate/events": "^7",
         "yetione/rabbitmq-module": "@dev",
-        "yetione/dtoable": "@dev"
+        "yetione/dtoable": "@dev",
+        "illuminate/log": "^7"
     },
     "autoload": {
         "psr-4": { "Yetione\\RabbitMQAdapter\\": "src/"}

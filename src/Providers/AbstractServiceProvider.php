@@ -15,16 +15,19 @@ use Yetione\RabbitMQ\Configs\QueuesConfig;
 use Yetione\RabbitMQ\Connection\ConnectionFactory;
 use Yetione\RabbitMQ\Consumer\ConsumerFactory;
 use Yetione\RabbitMQ\Event\EventDispatcherInterface;
+use Yetione\RabbitMQ\Logger\LoggerProviderInterface;
 use Yetione\RabbitMQ\Producer\ProducerFactory;
 use Yetione\RabbitMQ\Queue\QueueFactory;
 use Yetione\RabbitMQ\Service\RabbitMQService;
 use Yetione\RabbitMQAdapter\Events\EventDispatcher;
+use Yetione\RabbitMQAdapter\Logger\LaravelLoggerProvider;
 
 class AbstractServiceProvider extends ServiceProvider
 {
 
     public function register()
     {
+        $this->app->singleton(LoggerProviderInterface::class, LaravelLoggerProvider::class);
         $this->mergeConfigFrom(
             __DIR__.'/../../config/rabbitmq-default.php',
             'rabbitmq-default'
@@ -69,7 +72,7 @@ class AbstractServiceProvider extends ServiceProvider
             return new QueueFactory($app->make(QueuesConfig::class));
         });
         $this->app->singleton(ConnectionFactory::class, static function ($app): ConnectionFactory {
-            return new ConnectionFactory($app->make(ConnectionsConfig::class));
+            return new ConnectionFactory($app->make(ConnectionsConfig::class), $app->make(LaravelLoggerProvider::class));
         });
 
 
@@ -81,7 +84,8 @@ class AbstractServiceProvider extends ServiceProvider
                 $app->make(ProducersConfig::class),
                 $app->make(ExchangesConfig::class),
                 $app->make(ConnectionFactory::class),
-                $app->make(EventDispatcher::class)
+                $app->make(EventDispatcher::class),
+                $app->make(LaravelLoggerProvider::class)
             );
             return tap($producerFactory, function (ProducerFactory $factory) {
                 foreach (config('rabbitmq.producer_types', []) as $type => $producerClass) {
@@ -94,7 +98,8 @@ class AbstractServiceProvider extends ServiceProvider
             $consumersFactory = new ConsumerFactory(
                 $app->make(ConsumersConfig::class),
                 $app->make(ConnectionFactory::class),
-                $app->make(EventDispatcher::class)
+                $app->make(EventDispatcher::class),
+                $app->make(LaravelLoggerProvider::class)
             );
             return tap($consumersFactory, function (ConsumerFactory $factory) {
                 foreach (config('rabbitmq.consumer_types', []) as $type => $producerClass) {
