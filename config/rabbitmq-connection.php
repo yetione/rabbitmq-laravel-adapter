@@ -1,5 +1,11 @@
-<?php use Yetione\RabbitMQAdapter\Producers\BatchProducer;
-use Yetione\RabbitMQAdapter\Producers\SingleProducer;
+<?php
+
+use PhpAmqpLib\Connection\AMQPLazyConnection;
+use PhpAmqpLib\Connection\AMQPLazySocketConnection;
+use PhpAmqpLib\Connection\AMQPSocketConnection;
+use PhpAmqpLib\Connection\AMQPSSLConnection;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Yetione\RabbitMQ\Constant\Connection as ConnectionEnum;
 
 return [
     'credentials'=>[
@@ -16,10 +22,10 @@ return [
             'credentials'=>'default'
         ]
     ],
-    'connection_options'=>[
+    'connections'=>[
         'default'=>[
             'insist'=>false,
-            'login_method'=>'AMQPLAIN',
+            'login_method'=>ConnectionEnum::LOGIN_METHOD_AMQPPLAIN,
             'login_response'=> null,
             'locale'=> 'en_US',
             'connection_timeout'=> 3.0,
@@ -36,19 +42,22 @@ return [
             'read_write_timeout'=>3.0,
             'keepalive'=>false,
             'heartbeat'=>0,
-            'connection_type'=>'lazy'
+            'connection_type'=>ConnectionEnum::TYPE_STREAM_LAZY
         ],
         'consumer'=>[
             'insist'=>false,
-            'login_method'=>'AMQPLAIN',
+            'login_method'=>ConnectionEnum::LOGIN_METHOD_AMQPPLAIN,
             'connection_timeout'=>3.0,
             'read_write_timeout'=>3.0,
             'heartbeat'=>0,
-            'connection_type'=>'normal'
+            'connection_type'=>ConnectionEnum::TYPE_STREAM_NORMAL
         ]
     ],
-    'producers_types'=>[
-        'single'=> SingleProducer::class,
-        'batch'=> BatchProducer::class
+    'connection_types'=>[
+        ConnectionEnum::TYPE_STREAM_NORMAL => AMQPStreamConnection::class,
+        ConnectionEnum::TYPE_STREAM_LAZY => AMQPLazyConnection::class,
+        ConnectionEnum::TYPE_SOCKET_NORMAL => AMQPSocketConnection::class,
+        ConnectionEnum::TYPE_SOCKET_LAZY => AMQPLazySocketConnection::class,
+        ConnectionEnum::TYPE_STREAM_SSL => AMQPSSLConnection::class
     ]
 ];

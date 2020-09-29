@@ -9,5 +9,5 @@ use Yetione\RabbitMQ\Event\EventDispatcherInterface;
 
 interface ProducerContract
 {
-    public function __construct(array $config, ConnectionInterface $connection, EventDispatcherInterface $eventDispatcher);
+
 }
